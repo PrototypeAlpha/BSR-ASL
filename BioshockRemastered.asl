@@ -103,12 +103,12 @@ split
 {
 	if(current.lvl != old.lvl){
 		if(current.lvl == 0 && old.lvl != 0) vars.prevLvl=old.lvl;
-		print("[ASL] vars.prevLvl: "+vars.prevLvl+" | current.lvl: "+current.lvl);
+		//print("[ASL] vars.prevLvl: "+vars.prevLvl+" | current.lvl: "+current.lvl);
 		
 		if(game.ProcessName.Contains("2")){
 			if(vars.md){
 				if(current.area == 0 && old.area != 0) vars.prevArea=old.area;
-				print("[ASL] vars.prevArea: "+vars.prevArea+" | current.area: "+current.area);
+				//print("[ASL] vars.prevArea: "+vars.prevArea+" | current.area: "+current.area);
 				 if(vars.prevLvl == 2 	&& current.lvl == 19)	{vars.prevLvl=current.lvl;	return settings["Minerva's Den"];}
 			}
 			else
@@ -147,8 +147,11 @@ split
 	}
 	else if(game.ProcessName.Contains("2"))
 	{
+			// Split on leaving airlock from main FF and entering water section
 				 if(!vars.md && current.lvl==27 && current.area == 49 && old.area == 50)													return settings["Fontaine Futuristics 1"];
-			else if(!vars.md && current.lvl==39 && current.endMain && !old.endMain)															return settings["Inner Persephone"];
+			// Split on entering final elevator
+			else if(!vars.md && current.lvl==39 && current.area == 63 && current.endMain && !old.endMain)									return settings["Inner Persephone"];
+			// Minerva's Den splits
 			else if(vars.md  && current.lvl== 0 && vars.prevLvl == 19 && vars.prevArea== 4 && current.area== 2){vars.prevLvl=current.lvl;	return settings["Operations"];}
 			else if(vars.md  && current.lvl== 0 && old.lvl== 0 && current.area== 22 && current.endDLC && !old.endDLC)						return settings["The Thinker"];
 	}
