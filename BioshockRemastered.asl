@@ -1,9 +1,23 @@
-state("BioshockHD")
+state("BioshockHD","GOG/Steam 1.0.122872")
 {
 	bool	inGame			:	0x12D270C, 0x214, 0x6E8, 0x38;
 	byte	fontainePhase	:	0x12D22C4, 0x0, 0x14, 0x1C, 0x1148;
 	int		lvl				:	0x130287C;
 	int		loading			:	0x12D2730;
+}
+state("BioshockHD","EGS 1.0.127355")
+{
+	bool	inGame			:	0x1355A08, 0x214, 0x6E8, 0x38;
+	byte	fontainePhase	:	0x13555DC, 0x0, 0x18, 0x1C, 0x1148;
+	int		lvl				:	0x13853E8;
+	int		loading			:	0x1355A68;
+}
+state("BioshockHD","Steam 1.0.127355")
+{
+	bool	inGame			:	0x1356620, 0x214, 0x6E8, 0x38;
+	byte	fontainePhase	:	0x1356200, 0x0, 0x14, 0x1C, 0x1148;
+	int		lvl				:	0x1386004;
+	int		loading			:	0x1356680;
 }
 state("Bioshock2HD")
 {
@@ -67,6 +81,43 @@ init
 	vars.prevArea=0;
 	if(!game.ProcessName.Contains("2"))
 		vars.md=false;
+	
+	var module = modules.First();
+	var name = module.ModuleName;
+	var size = module.ModuleMemorySize;
+	
+	print("Size = "+size);
+	
+	// Steam (Pre-August 2022) / GOG 1.0.122872 = 24207360
+	// EGS 1.0.127355 = 23552000
+	// Steam 1.0.127355 = 23556096
+	switch(size)
+    {
+		case 24207360:
+			version = "GOG/Steam 1.0.122872";
+			break;
+		case 23552000:
+			version = "EGS 1.0.127355";
+			break;
+		case 23556096:
+			version = "Steam 1.0.127355";
+			break;
+		default:
+			version = "Unknown";
+			var gameMessageText = "Unknown "+name+" "+size;
+			var gameMessage = MessageBox.Show(
+				"It appears you're running an unknown/newer version of the game.\n"+
+				"This ASL script might not work.\n\n"+
+				"Please @PrototypeAlpha#7561 on the BioShock Speedrunning discord with "+
+				"the following:\n"+gameMessageText+"\n\n"+
+				"Press OK to copy the above info to the clipboard and close this message.",
+				"LiveSplit",
+				MessageBoxButtons.OKCancel,MessageBoxIcon.Warning
+			);
+			if (gameMessage == DialogResult.OK) Clipboard.SetText(gameMessageText);
+			break;
+	}
+	print("Version = "+version);
 }
 
 exit{timer.IsGameTimePaused=true;}
