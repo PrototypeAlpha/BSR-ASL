@@ -1,3 +1,17 @@
+state("BioshockHD","Steam 1.0.127355-L")
+{
+	bool	inGame			:	0x1356620, 0x214, 0x6E8, 0x38;
+	byte	fontainePhase	:	0x1356200, 0x0, 0x14, 0x1C, 0x1148;
+	int		lvl				:	0x1386004;
+	int		loading			:	0x1356680;
+}
+state("BioshockHD","EGS 1.0.127355-L")
+{
+	bool	inGame			:	0x1355A08, 0x214, 0x6E8, 0x38;
+	byte	fontainePhase	:	0x13555DC, 0x0, 0x18, 0x1C, 0x1148;
+	int		lvl				:	0x13853E8;
+	int		loading			:	0x1355A68;
+}
 state("BioshockHD","GOG/Steam 1.0.122872")
 {
 	bool	inGame			:	0x12D270C, 0x214, 0x6E8, 0x38;
@@ -5,28 +19,42 @@ state("BioshockHD","GOG/Steam 1.0.122872")
 	int		lvl				:	0x130287C;
 	int		loading			:	0x12D2730;
 }
-state("BioshockHD","EGS 1.0.127355")
+
+state("Bioshock2HD","Steam 1.0.122864-L")
 {
-	bool	inGame			:	0x1355A08, 0x214, 0x6E8, 0x38;
-	byte	fontainePhase	:	0x13555DC, 0x0, 0x18, 0x1C, 0x1148;
-	int		lvl				:	0x13853E8;
-	int		loading			:	0x1355A68;
+	bool 	isSaving		:	0x1A67A44;
+	bool 	isLoading		:	0x18063F4, 0x298;
+	byte	lvl				:	0x18063F4, 0x278;
+	byte	area			:	0x17F5FD4;
+	//bool	endMain			:	0x18063F4, 0x1F0, 0x34, 0x1C0, 0x788;
+	short	posX			:	0x17F5D7E;
 }
-state("BioshockHD","Steam 1.0.127355")
+state("Bioshock2HD","EGS 1.0.122864-L")
 {
-	bool	inGame			:	0x1356620, 0x214, 0x6E8, 0x38;
-	byte	fontainePhase	:	0x1356200, 0x0, 0x14, 0x1C, 0x1148;
-	int		lvl				:	0x1386004;
-	int		loading			:	0x1356680;
+	bool 	isSaving		:	0x1A66CA4;
+	bool 	isLoading		:	0x1805644, 0x298;
+	byte	lvl				:	0x1805644, 0x278;
+	byte	area			:	0x17F5234;
+	//bool	endMain			:	0x1805644, 0x1F0, 0x34, 0x1C0, 0x7A0;
+	short	posX			:	0x17F5226;
 }
-state("Bioshock2HD")
+state("Bioshock2HD","GOG 1.0.122864")
+{
+	bool 	isSaving		:	0x1A98470;
+	bool 	isLoading		:	0x1882F10, 0x298;
+	byte	lvl				:	0x1882F10, 0x278;
+	byte	area			:	0x189B5AC;
+	//bool	endMain			:	0x189D050, 0x1F0, 0x34, 0x1C0, 0x7A0;
+	short	posX			:	0x189B366;
+}
+state("Bioshock2HD","Steam 1.0.122864")
 {
 	bool 	isSaving		:	0x1A9A680;
 	bool 	isLoading		:	0x1885120, 0x298;
 	byte	lvl				:	0x1885120, 0x278;
 	byte	area			:	0x189D7BC;
-	bool	endMain			:	0x189F260, 0x1F0, 0x34, 0x1C0, 0x788;
-	bool	endDLC			:	0x1AAEE1C, 0x24, 0xEC, 0x938;
+	//bool	endMain			:	0x189F260, 0x1F0, 0x34, 0x1C0, 0x788;
+	short	posX			:	0x189D576;
 }
 
 startup 
@@ -88,19 +116,39 @@ init
 	
 	print("Size = "+size);
 	
-	// Steam (Pre-August 2022) / GOG 1.0.122872 = 24207360
-	// EGS 1.0.127355 = 23552000
-	// Steam 1.0.127355 = 23556096
+	// BS1R
+	//  Steam 1.0.127355-L = 23556096
+	//  EGS 1.0.127355-L = 23552000
+	//  Steam (Pre-August 2022) / GOG 1.0.122872 = 24207360
+	// BS2R
+	//	Steam 1.0.122864-L = 33464320
+	//	EGS 1.0.122864-L = 33460224
+	//  GOG 1.0.122864 = 33394688
+	//  Steam 1.0.122864 = 33402880
 	switch(size)
     {
+		// BS1R
+		case 23556096:
+			version = "Steam 1.0.127355-L";
+			break;
+		case 23552000:
+			version = "EGS 1.0.127355-L";
+			break;
 		case 24207360:
 			version = "GOG/Steam 1.0.122872";
 			break;
-		case 23552000:
-			version = "EGS 1.0.127355";
+		// BS2R
+		case 33464320:
+			version = "Steam 1.0.122864-L";
 			break;
-		case 23556096:
-			version = "Steam 1.0.127355";
+		case 33460224:
+			version = "EGS 1.0.122864-L";
+			break;
+		case 33394688:
+			version = "GOG 1.0.122864";
+			break;
+		case 33402880:
+			version = "Steam 1.0.122864";
 			break;
 		default:
 			version = "Unknown";
@@ -130,7 +178,8 @@ start
 	if(game.ProcessName.Contains("2")){
 		if(current.lvl == 2){ // Minerva's Den
 			vars.md=true;
-			return current.area == 47 && old.area == 56;
+			//return current.area == 47 && old.area == 56;
+			return current.area == 47 && current.posX < -15054 && old.posX == -15054;
 		}
 		else{ // Main game
 			vars.md=false;
@@ -201,10 +250,10 @@ split
 			// Split on leaving airlock from main FF and entering water section
 				 if(!vars.md && current.lvl==27 && current.area == 49 && old.area == 50)													return settings["Fontaine Futuristics 1"];
 			// Split on entering final elevator
-			else if(!vars.md && current.lvl==39 && current.area == 63 && current.endMain && !old.endMain)									return settings["Inner Persephone"];
+			else if(!vars.md && current.lvl==39 && current.area == 63 && old.posX < 17808 && current.posX > 17807)							return settings["Inner Persephone"];
 			// Minerva's Den splits
 			else if(vars.md  && current.lvl== 0 && vars.prevLvl == 19 && vars.prevArea== 4 && current.area== 2){vars.prevLvl=current.lvl;	return settings["Operations"];}
-			else if(vars.md  && current.lvl== 0 && old.lvl== 0 && current.area== 22 && current.endDLC && !old.endDLC)						return settings["The Thinker"];
+			else if(vars.md  && current.lvl== 0 && old.lvl== 0 && current.area== 22 && old.posX < 17675 && current.posX > 17674)			return settings["The Thinker"];
 	}
 	else if(current.lvl==1309 && old.fontainePhase==3 && current.fontainePhase==4)		   return settings["Fontaine"];
 }
